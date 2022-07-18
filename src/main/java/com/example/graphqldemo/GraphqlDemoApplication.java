@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,7 +44,25 @@ class CustomerController {
         db.put(customer.id(), customer);
         return Mono.just(customer);
     }
+
+    @SchemaMapping(typeName = "Customer")
+    Mono<Account> account(Customer customer) {
+        System.out.println("account called for customer["+customer.id()+"]");
+        return Mono.just(new Account(customer.id(), "Account@"+ Instant.now()));
+    }
+
+    @SchemaMapping(typeName = "Customer")
+    Mono<Profile> profile(Customer customer) {
+        System.out.println("profile called for customer["+customer.id()+"]");
+        return Mono.just(new Profile(customer.id(), "Profile@"+ Instant.now()));
+    }
 }
 
 record Customer(int id, String name) {
+}
+
+record Account(int id, String name) {
+}
+
+record Profile(int id, String name) {
 }
