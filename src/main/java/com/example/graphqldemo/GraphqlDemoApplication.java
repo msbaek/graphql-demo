@@ -38,7 +38,7 @@ class CustomerController {
 
     @QueryMapping
     public Mono<Customer> customerById(@Argument int id) {
-        return Mono.just(new Customer(id, "John Doe"));
+        return Mono.justOrEmpty(db.get(id));
     }
 
     @MutationMapping
