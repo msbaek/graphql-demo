@@ -48,6 +48,20 @@ class CustomerController {
         return Mono.just(customer);
     }
 
+    @MutationMapping
+    public Mono<Customer> updateCustomer(@Argument int id, @Argument String name) {
+        var customer = db.get(id);
+        customer.updateName(name);
+        return Mono.just(customer);
+    }
+
+    @MutationMapping
+    public Mono<Customer> deleteCustomer(@Argument int id) {
+        var customer = db.get(id);
+        db.remove(id);
+        return Mono.just(customer);
+    }
+
     @BatchMapping
     Map<Customer, Account> account(List<Customer> customers) {
         System.out.println("account for " + customers.size() + " customers");
@@ -65,7 +79,26 @@ class CustomerController {
     }
 }
 
-record Customer(int id, String name) {
+class Customer {
+    private int id;
+    private String name;
+
+    public Customer(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int id() {
+        return id;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    void updateName(String name) {
+        this.name = name;
+    }
 }
 
 record Account(int id, String name) {
